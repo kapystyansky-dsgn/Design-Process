@@ -1,0 +1,14 @@
+{
+  "name": "Design Process",
+  "id": "com.mycompany.ux-flow-audit",
+  "api": "1.0.0",
+  "editorType": ["figma"],
+  "main": "code.js",
+  "ui": "ui.html",
+  "networkAccess": {
+    "allowedDomains": [
+      "https://gemini-proxy.mooo.com",
+      "https://generativelanguage.googleapis.com"
+    ]
+  }
+}

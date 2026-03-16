@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Design Process</title>
+  <style>
+    :root {
+      --ds-font: "Gazprombank Sans", "Inter", system-ui, sans-serif;
+      --ds-primary: #0066FF;
+      --ds-primary-hover: #0052CC;
+      --ds-on-primary: #FFFFFF;
+      --ds-bg: #FFFFFF;
+      --ds-surface: #F4F5F7;
+      --ds-text: #1A1A2E;
+      --ds-text-secondary: #6B7280;
+      --ds-border: #E2E4E9;
+      --ds-error: #DC3545;
+      --ds-success: #198754;
+      --ds-warning: #F59E0B;
+      --ds-radius: 8px;
+      --ds-radius-sm: 6px;
+      --ds-spacing-xs: 4px;
+      --ds-spacing-sm: 8px;
+      --ds-spacing-md: 12px;
+      --ds-spacing-lg: 16px;
+      --ds-spacing-xl: 20px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--ds-font);
+      font-size: 13px;
+      color: var(--ds-text);
+      background: var(--ds-bg);
+      line-height: 1.45;
+      padding: 16px;
+      overflow-x: hidden;
+    }
+
+    /* --- Header --- */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--ds-spacing-lg);
+    }
+    .header h1 {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+    }
+    .header .version {
+      font-size: 10px;
+      color: var(--ds-text-secondary);
+      background: var(--ds-surface);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    /* --- Sections --- */
+    .section {
+      margin-bottom: var(--ds-spacing-lg);
+    }
+    .section-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--ds-text-secondary);
+      margin-bottom: var(--ds-spacing-sm);
+    }
+
+    /* --- Form elements --- */
+    .field { margin-bottom: var(--ds-spacing-md); }
+    .field-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--ds-text);
+      margin-bottom: var(--ds-spacing-xs);
+    }
+    .field-hint {
+      font-size: 10px;
+      color: var(--ds-text-secondary);
+      margin-top: 2px;
+    }
+
+    .ds-input, .ds-select, .ds-textarea {
+      width: 100%;
+      font-family: var(--ds-font);
+      font-size: 13px;
+      color: var(--ds-text);
+      background: var(--ds-bg);
+      border: 1px solid var(--ds-border);
+      border-radius: var(--ds-radius-sm);
+      padding: 8px 10px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .ds-input:focus, .ds-select:focus, .ds-textarea:focus {
+      border-color: var(--ds-primary);
+    }
+    .ds-input::placeholder, .ds-textarea::placeholder {
+      color: #B0B5BF;
+    }
+    .ds-textarea {
+      resize: vertical;
+      min-height: 52px;
+    }
+    .ds-select {
+      cursor: pointer;
+      -webkit-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%236B7280' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 28px;
+    }
+
+    /* --- Provider key sections --- */
+    .provider-section { display: none; margin-top: var(--ds-spacing-sm); }
+    .provider-link {
+      font-size: 11px;
+      margin-top: 4px;
+      display: block;
+    }
+    .provider-link a { color: var(--ds-primary); text-decoration: none; }
+    .provider-link a:hover { text-decoration: underline; }
+    .provider-note {
+      font-size: 10px;
+      color: var(--ds-text-secondary);
+      margin-top: 2px;
+    }
+
+    /* --- Buttons --- */
+    .btn-row {
+      display: flex;
+      gap: var(--ds-spacing-sm);
+      margin-top: var(--ds-spacing-lg);
+    }
+    .btn-primary {
+      flex: 1;
+      font-family: var(--ds-font);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ds-on-primary);
+      background: var(--ds-primary);
+      border: none;
+      border-radius: var(--ds-radius);
+      padding: 10px 16px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-primary:hover { background: var(--ds-primary-hover); }
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .btn-secondary {
+      font-family: var(--ds-font);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ds-text-secondary);
+      background: transparent;
+      border: 1px solid var(--ds-border);
+      border-radius: var(--ds-radius);
+      padding: 10px 16px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-secondary:hover { background: var(--ds-surface); }
+
+    /* --- Divider --- */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--ds-border);
+      margin: var(--ds-spacing-lg) 0;
+    }
+
+    /* --- Status --- */
+    .status {
+      margin-top: var(--ds-spacing-md);
+      font-size: 12px;
+      min-height: 18px;
+    }
+    .status-error { color: var(--ds-error); }
+    .status-success { color: var(--ds-success); }
+
+    .error-box {
+      margin-top: var(--ds-spacing-sm);
+      background: #FEF2F2;
+      border: 1px solid #FECACA;
+      border-radius: var(--ds-radius-sm);
+      padding: var(--ds-spacing-sm) var(--ds-spacing-md);
+      max-height: 120px;
+      overflow-y: auto;
+    }
+    .error-box pre {
+      font-family: "Consolas", "Monaco", monospace;
+      font-size: 10px;
+      color: var(--ds-error);
+      white-space: pre-wrap;
+      word-break: break-all;
+      margin: 0;
+    }
+    .btn-copy-error {
+      margin-top: var(--ds-spacing-xs);
+      font-family: var(--ds-font);
+      font-size: 11px;
+      color: var(--ds-error);
+      background: transparent;
+      border: 1px solid #FECACA;
+      border-radius: var(--ds-radius-sm);
+      padding: 4px 10px;
+      cursor: pointer;
+    }
+    .btn-copy-error:hover { background: #FEF2F2; }
+
+    /* --- Report --- */
+    .report {
+      margin-top: var(--ds-spacing-md);
+      max-height: 340px;
+      overflow-y: auto;
+    }
+
+    .score-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: var(--ds-spacing-sm);
+    }
+    .score-badge .label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--ds-text-secondary);
+    }
+    .score-red { color: var(--ds-error); }
+    .score-yellow { color: var(--ds-warning); }
+    .score-green { color: var(--ds-success); }
+
+    .report-summary {
+      font-size: 13px;
+      color: var(--ds-text);
+      margin-bottom: var(--ds-spacing-md);
+      line-height: 1.5;
+    }
+
+    .report-section-title {
+      font-size: 12px;
+      font-weight: 600;
+      margin: var(--ds-spacing-md) 0 var(--ds-spacing-sm);
+    }
+
+    .problem-card {
+      background: var(--ds-surface);
+      border-left: 3px solid var(--ds-error);
+      border-radius: 0 var(--ds-radius-sm) var(--ds-radius-sm) 0;
+      padding: var(--ds-spacing-sm) var(--ds-spacing-md);
+      margin-bottom: var(--ds-spacing-sm);
+    }
+    .problem-card.friction { border-left-color: var(--ds-warning); }
+    .problem-card.dropoff { border-left-color: var(--ds-error); }
+    .problem-card .title {
+      font-weight: 600;
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+    .problem-card .meta {
+      font-size: 11px;
+      color: var(--ds-text-secondary);
+      line-height: 1.45;
+    }
+    .problem-card .action {
+      font-size: 12px;
+      margin-top: 4px;
+    }
+    .screen-badge {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--ds-primary);
+      margin-bottom: 4px;
+    }
+
+    .win-item, .tip-item {
+      font-size: 12px;
+      padding: 4px 0 4px var(--ds-spacing-md);
+      position: relative;
+      line-height: 1.45;
+    }
+    .win-item::before { content: "→ "; color: var(--ds-success); font-weight: 600; }
+    .tip-item::before { content: "● "; color: var(--ds-primary); font-size: 8px; vertical-align: middle; }
+
+    /* --- Loader overlay --- */
+    .loader-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.92);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 24px;
+      font-family: var(--ds-font);
+    }
+    .loader-overlay.visible {
+      display: flex;
+    }
+    .loader-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--ds-border);
+      border-top-color: var(--ds-primary);
+      border-radius: 50%;
+      animation: loader-spin 0.8s linear infinite;
+    }
+    @keyframes loader-spin {
+      to { transform: rotate(360deg); }
+    }
+    .loader-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ds-text);
+      margin-top: 16px;
+      margin-bottom: 12px;
+    }
+    .loader-steps {
+      list-style: none;
+      width: 100%;
+      max-width: 320px;
+    }
+    .loader-step {
+      font-size: 12px;
+      color: var(--ds-text-secondary);
+      padding: 6px 0 6px 24px;
+      position: relative;
+      transition: color 0.2s;
+    }
+    .loader-step::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--ds-border);
+    }
+    .loader-step.active {
+      color: var(--ds-primary);
+      font-weight: 500;
+    }
+    .loader-step.active::before {
+      background: var(--ds-primary);
+      box-shadow: 0 0 0 2px rgba(0, 102, 255, 0.2);
+    }
+    .loader-step.done {
+      color: var(--ds-success);
+    }
+    .loader-step.done::before {
+      content: "✓";
+      background: var(--ds-success);
+      color: white;
+      font-size: 10px;
+      line-height: 8px;
+      text-align: center;
+    }
+
+    /* --- Screens --- */
+    .screen {
+      display: none;
+    }
+    .screen.visible {
+      display: block;
+    }
+    .main-actions {
+      display: flex;
+      flex-direction: column;
+      gap: var(--ds-spacing-md);
+      margin-top: 24px;
+    }
+    .main-btn {
+      display: block;
+      width: 100%;
+      padding: 16px 20px;
+      font-family: var(--ds-font);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ds-text);
+      background: var(--ds-surface);
+      border: 1px solid var(--ds-border);
+      border-radius: var(--ds-radius);
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .main-btn:hover {
+      background: #E8EAEF;
+      border-color: var(--ds-primary);
+    }
+    .main-btn strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+    .main-btn span {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--ds-text-secondary);
+    }
+    .back-link {
+      display: inline-block;
+      font-size: 12px;
+      color: var(--ds-primary);
+      margin-bottom: var(--ds-spacing-md);
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="screen visible" id="screen-audit">
+    <div class="header">
+      <h1>Design Process</h1>
+      <span class="version">v1.0</span>
+    </div>
+
+  <div class="section">
+    <div class="section-title">Действия</div>
+    <div class="btn-row" style="flex-direction: column; gap: 8px;">
+      <button type="button" class="btn-primary" id="btn-format-file">Оформить файл</button>
+      <button type="button" class="btn-primary" id="btn-check-ux">Проверить UX</button>
+      <button type="button" class="btn-primary" id="btn-check-ds">Проверить дизайн на соответствие дизайн-системе</button>
+      <button type="button" class="btn-secondary" id="close">Закрыть</button>
+    </div>
+  </div>
+
+  <div class="status" id="status"></div>
+  <div class="report" id="report"></div>
+  <div class="report-actions" id="report-actions" style="display:none; margin-top: 8px;">
+    <button type="button" class="btn-primary" id="btn-put-on-canvas">Вынести на канву</button>
+  </div>
+
+  <div class="loader-overlay" id="loader">
+    <div class="loader-spinner"></div>
+    <div class="loader-title">Идёт анализ</div>
+    <ul class="loader-steps" id="loader-steps"></ul>
+  </div>
+
+  </div>
+  <!-- /#screen-audit -->
+
+  <script>
+    /* --- Global error catcher --- */
+    window.onerror = function(message, source, lineno) {
+      var el = document.getElementById('status');
+      if (el) el.innerHTML = '<span class="status-error">JS: ' + message + ' (line ' + lineno + ')</span>';
+      if (typeof setButtonsEnabled === 'function') setButtonsEnabled(true);
+    };
+
+    /* --- Safe localStorage --- */
+    function storageGet(key) { try { return localStorage.getItem(key); } catch(e) { return null; } }
+    function storageSet(key, value) { try { localStorage.setItem(key, value); } catch(e) {} }
+    function storageRemove(key) { try { localStorage.removeItem(key); } catch(e) {} }
+
+    /* ========== КОНФИГУРАЦИЯ — замените на свои значения ========== */
+    var PROXY_URL = 'https://gemini-proxy.mooo.com';  /* URL вашего proxy (localhost:3000 или развёрнутый сервер) */
+    var TEAM_PROXY_URL = PROXY_URL;
+    var FIGMA_PROXY_URL = PROXY_URL;
+    var BASE_KNOWLEDGE_FILE = 'dILPO7rdRMS7JXaeOwvVEJ';
+    var BASE_KNOWLEDGE_NODE = '802-11234';
+    var TOOLS_FILE = 'zhBJGwSZKLdIUG2F3IJSNQ';
+    var TOOLS_NODE = '861-11829';
+
+    var GEMINI_MODELS = [
+      'gemini-2.5-flash',
+      'gemini-2.0-flash',
+      'gemini-2.0-flash-lite'
+    ];
+    var lastError = '';
+
+    /* --- DOM refs --- */
+    var statusEl = document.getElementById('status');
+    var reportEl = document.getElementById('report');
+    var closeBtn = document.getElementById('close');
+    var loaderEl = document.getElementById('loader');
+    var loaderStepsEl = document.getElementById('loader-steps');
+    var btnFormatFile = document.getElementById('btn-format-file');
+    var btnCheckUx = document.getElementById('btn-check-ux');
+    var btnCheckDs = document.getElementById('btn-check-ds');
+    var btnPutOnCanvas = document.getElementById('btn-put-on-canvas');
+    var reportActionsEl = document.getElementById('report-actions');
+    var lastUxReport = null;
+    var lastFeatureName = null;
+
+    /* --- Loader --- */
+    function showLoader(stepLabels) {
+      if (!loaderEl || !loaderStepsEl) return;
+      loaderStepsEl.innerHTML = '';
+      for (var i = 0; i < stepLabels.length; i++) {
+        var li = document.createElement('li');
+        li.className = 'loader-step';
+        li.setAttribute('data-step', String(i));
+        li.textContent = stepLabels[i];
+        loaderStepsEl.appendChild(li);
+      }
+      loaderEl.classList.add('visible');
+    }
+    function setLoaderStep(index) {
+      if (!loaderStepsEl) return;
+      var steps = loaderStepsEl.querySelectorAll('.loader-step');
+      for (var i = 0; i < steps.length; i++) {
+        steps[i].classList.remove('active', 'done');
+        if (i < index) steps[i].classList.add('done');
+        else if (i === index) steps[i].classList.add('active');
+      }
+    }
+    function hideLoader() {
+      if (loaderEl) loaderEl.classList.remove('visible');
+    }
+
+    /* --- DS Token handler --- */
+    function slugify(name) {
+      return name.toLowerCase().replace(/[^a-zа-я0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    }
+
+    var COLOR_MAP = {
+      'primary': '--ds-primary', 'brand': '--ds-primary',
+      'secondary': '--ds-text-secondary',
+      'background': '--ds-bg', 'surface': '--ds-surface',
+      'error': '--ds-error', 'danger': '--ds-error',
+      'success': '--ds-success',
+      'warning': '--ds-warning',
+      'text': '--ds-text', 'border': '--ds-border'
+    };
+
+    function applyDSTokens(tokens) {
+      if (!tokens) return;
+      var root = document.documentElement;
+
+      if (tokens.fontFamily) {
+        root.style.setProperty('--ds-font', tokens.fontFamily + ', "Inter", system-ui, sans-serif');
+      }
+      if (tokens.colors) {
+        for (var i = 0; i < tokens.colors.length; i++) {
+          var c = tokens.colors[i];
+          var nameLower = c.name.toLowerCase();
+          var mapped = false;
+          for (var keyword in COLOR_MAP) {
+            if (nameLower.indexOf(keyword) !== -1) {
+              root.style.setProperty(COLOR_MAP[keyword], c.hex);
+              mapped = true;
+              break;
+            }
+          }
+          if (!mapped) {
+            root.style.setProperty('--ds-' + slugify(c.name), c.hex);
+          }
+        }
+      }
+    }
+
+    /* --- Helpers --- */
+    function esc(s) {
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function cleanAndParseJSON(text) {
+      var clean = text
+        .replace(/```json\s*/g, '')
+        .replace(/```\s*/g, '')
+        .trim();
+      var match = clean.match(/\{[\s\S]*\}/);
+      var json = match ? match[0] : clean;
+      json = json
+        .replace(/,\s*\]/g, ']')
+        .replace(/,\s*\}/g, '}');
+      try {
+        return JSON.parse(json);
+      } catch (e1) {
+        var repaired = json;
+        var openBraces = (repaired.match(/\{/g) || []).length;
+        var closeBraces = (repaired.match(/\}/g) || []).length;
+        var openBrackets = (repaired.match(/\[/g) || []).length;
+        var closeBrackets = (repaired.match(/\]/g) || []).length;
+
+        var lastGood = repaired.lastIndexOf('",');
+        if (lastGood === -1) lastGood = repaired.lastIndexOf('"}');
+        if (lastGood === -1) lastGood = repaired.lastIndexOf('"]');
+        if (lastGood > 0) {
+          repaired = repaired.substring(0, lastGood + 1);
+        }
+
+        for (var b = 0; b < openBrackets - closeBrackets; b++) repaired += ']';
+        for (var c = 0; c < openBraces - closeBraces; c++) repaired += '}';
+
+        repaired = repaired
+          .replace(/,\s*\]/g, ']')
+          .replace(/,\s*\}/g, '}');
+
+        try {
+          return JSON.parse(repaired);
+        } catch (e2) {
+          throw new Error(e1.message + '\n\nОтвет Gemini:\n' + text.substring(0, 1500));
+        }
+      }
+    }
+
+    function showError(fullText) {
+      lastError = fullText;
+      statusEl.innerHTML = '<span class="status-error">Ошибка AI-провайдера</span>';
+      reportEl.innerHTML =
+        '<div class="error-box"><pre>' + esc(fullText) + '</pre></div>' +
+        '<button class="btn-copy-error" id="copy_err">Скопировать ошибку</button>';
+      var copyBtn = document.getElementById('copy_err');
+      if (copyBtn) {
+        copyBtn.onclick = function() {
+          try {
+            var ta = document.createElement('textarea');
+            ta.value = lastError;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            copyBtn.textContent = 'Скопировано!';
+            setTimeout(function() { copyBtn.textContent = 'Скопировать ошибку'; }, 1500);
+          } catch(e) {
+            copyBtn.textContent = 'Не удалось скопировать';
+          }
+        };
+      }
+    }
+
+    function parseScreenFromText(text) {
+      if (!text || typeof text !== 'string') return { screen: null, rest: text || '' };
+      var m = text.match(/^Экран:\s*([^.—]+)[.\s—]+(.+)$/);
+      if (m) return { screen: m[1].trim(), rest: m[2].trim() };
+      return { screen: null, rest: text };
+    }
+
+    function formatReport(r) {
+      if (!r) return '<span class="status-error">Пустой отчёт.</span>';
+      var h = '';
+
+      var scoreClass = (r.score >= 80) ? 'score-green' : (r.score >= 50) ? 'score-yellow' : 'score-red';
+      h += '<div class="score-badge"><span class="' + scoreClass + '">' + (r.score != null ? r.score : '—') + '</span><span class="label">/ 100</span></div>';
+
+      if (r.summaryShort) h += '<div class="report-summary" style="margin-bottom:12px">' + esc(r.summaryShort) + '</div>';
+
+      if (r.cognitiveWalkthrough && r.cognitiveWalkthrough.length > 0) {
+        h += '<div class="report-section-title">Cognitive Walkthrough</div>';
+        for (var i = 0; i < r.cognitiveWalkthrough.length; i++) {
+          var c = r.cognitiveWalkthrough[i];
+          var clarityClass = (c.clarity === 'Clear') ? '' : (c.clarity === 'Friction') ? 'friction' : 'dropoff';
+          h += '<div class="problem-card ' + clarityClass + '">';
+          if (c.screen) h += '<div class="screen-badge">Экран: ' + esc(c.screen) + '</div>';
+          h += '<div class="title">' + esc(c.step) + ' — ' + esc(c.clarity) + '</div>';
+          if (c.userQuestion) h += '<div class="meta">Вопрос: ' + esc(c.userQuestion) + '</div>';
+          if (c.note) h += '<div class="action">' + esc(c.note) + '</div>';
+          h += '</div>';
+        }
+      }
+      if (r.multiRoleFindings && r.multiRoleFindings.length > 0) {
+        h += '<div class="report-section-title">Multi-Role Analysis</div>';
+        for (var i = 0; i < r.multiRoleFindings.length; i++) {
+          var m = r.multiRoleFindings[i];
+          h += '<div class="problem-card">';
+          if (m.screen) h += '<div class="screen-badge">Экран: ' + esc(m.screen) + '</div>';
+          h += '<div class="title">' + esc(m.role) + ': ' + esc(m.screen || '') + ' → ' + esc(m.element || '') + '</div>';
+          h += '<div class="meta">' + esc(m.finding) + '</div>';
+          if (m.suggestion) h += '<div class="action">→ ' + esc(m.suggestion) + '</div>';
+          h += '</div>';
+        }
+      }
+      if (r.nielsenAudit && r.nielsenAudit.length > 0) {
+        h += '<div class="report-section-title">Nielsen Heuristics</div>';
+        for (var i = 0; i < r.nielsenAudit.length; i++) {
+          var n = r.nielsenAudit[i];
+          var ns = n.score != null ? n.score : '—';
+          h += '<div class="problem-card">';
+          if (n.screen) h += '<div class="screen-badge">Экран: ' + esc(n.screen) + '</div>';
+          h += '<div class="title"><strong>' + esc(n.heuristic) + '</strong> (' + ns + '/2): ' + esc(n.element || '') + '</div>';
+          if (n.note) h += '<div class="meta">' + esc(n.note) + '</div>';
+          h += '</div>';
+        }
+      }
+      if (r.usabilityHypotheses && r.usabilityHypotheses.length > 0) {
+        h += '<div class="report-section-title">Usability Hypotheses (ICE)</div>';
+        for (var i = 0; i < r.usabilityHypotheses.length; i++) {
+          var u = r.usabilityHypotheses[i];
+          h += '<div class="problem-card">';
+          if (u.screen) h += '<div class="screen-badge">Экран: ' + esc(u.screen) + '</div>';
+          h += '<div class="title">ICE ' + (u.iceScore != null ? u.iceScore.toFixed(1) : '') + ' — ' + esc(u.affectedMetric || '') + '</div>';
+          h += '<div class="meta">' + esc(u.hypothesis) + '</div>';
+          h += '</div>';
+        }
+      }
+      if (r.quickWins && r.quickWins.length > 0) {
+        h += '<div class="report-section-title">Быстрые победы</div>';
+        for (var i = 0; i < r.quickWins.length; i++) {
+          var q = parseScreenFromText(r.quickWins[i]);
+          if (q.screen) {
+            h += '<div class="problem-card"><div class="screen-badge">Экран: ' + esc(q.screen) + '</div><div class="action">→ ' + esc(q.rest) + '</div></div>';
+          } else {
+            h += '<div class="win-item">' + esc(r.quickWins[i]) + '</div>';
+          }
+        }
+      }
+      if (r.inclusivityTips && r.inclusivityTips.length > 0) {
+        h += '<div class="report-section-title">Доступность</div>';
+        for (var i = 0; i < r.inclusivityTips.length; i++) {
+          var t = parseScreenFromText(r.inclusivityTips[i]);
+          if (t.screen) {
+            h += '<div class="problem-card"><div class="screen-badge">Экран: ' + esc(t.screen) + '</div><div class="meta">' + esc(t.rest) + '</div></div>';
+          } else {
+            h += '<div class="tip-item">' + esc(r.inclusivityTips[i]) + '</div>';
+          }
+        }
+      }
+
+      if (r.featureOverview) {
+        h += '<div class="report-section-title">1. Обзор фичи</div>';
+        h += '<div class="report-summary">' + esc(r.featureOverview) + '</div>';
+      }
+      if (r.flowEvaluation) {
+        h += '<div class="report-section-title">2. Структура флоу</div>';
+        h += '<div class="report-summary">' + esc(r.flowEvaluation) + '</div>';
+      }
+      if (r.designSystemSection) {
+        h += '<div class="report-section-title">Дизайн‑система и паттерны</div>';
+        h += '<div class="report-summary">' + esc(r.designSystemSection) + '</div>';
+      }
+      if (r.textsSection) {
+        h += '<div class="report-section-title">Тексты и понятность</div>';
+        h += '<div class="report-summary">' + esc(r.textsSection) + '</div>';
+      }
+      if (r.jtbd) {
+        h += '<div class="report-section-title">3. JTBD</div>';
+        h += '<div class="report-summary">' + esc(r.jtbd) + '</div>';
+      }
+      if (r.uxSummary) {
+        h += '<div class="report-section-title">4. Краткая оценка UX</div>';
+        h += '<div class="report-summary">' + esc(r.uxSummary) + '</div>';
+      }
+      if (r.researchInsights && r.researchInsights.length > 0) {
+        h += '<div class="report-section-title">5. Инсайты из ресерча</div>';
+        for (var i = 0; i < r.researchInsights.length; i++) {
+          h += '<div class="tip-item">' + esc(r.researchInsights[i]) + '</div>';
+        }
+      }
+      var problems = r.top4Problems || r.top3Problems;
+      if (problems && problems.length > 0) {
+        h += '<div class="report-section-title">6. Топ проблем</div>';
+        for (var i = 0; i < problems.length; i++) {
+          var p = problems[i];
+          h += '<div class="problem-card">';
+          h += '<div class="title">' + esc(p.title) + '</div>';
+          h += '<div class="meta">Где: ' + esc(p.where) + '</div>';
+          h += '<div class="meta">Почему: ' + esc(p.why) + '</div>';
+          if (p.metric) h += '<div class="meta">Метрика: ' + esc(p.metric) + '</div>';
+          h += '<div class="action">→ ' + esc(p.action) + '</div>';
+          h += '</div>';
+        }
+      }
+      if (r.quickWins && r.quickWins.length > 0) {
+        h += '<div class="report-section-title">7. Быстрые победы</div>';
+        for (var i = 0; i < r.quickWins.length; i++) {
+          h += '<div class="win-item">' + esc(r.quickWins[i]) + '</div>';
+        }
+      }
+      var incl = r.inclusivity || r.inclusivityTips;
+      if (incl && incl.length > 0) {
+        h += '<div class="report-section-title">8. Доступность</div>';
+        for (var i = 0; i < incl.length; i++) {
+          h += '<div class="tip-item">' + esc(incl[i]) + '</div>';
+        }
+      }
+      if (r.targetUXState) {
+        h += '<div class="report-section-title">9. Целевой UX</div>';
+        h += '<div class="report-summary">' + esc(r.targetUXState) + '</div>';
+      }
+      if (r.summaryShort && !r.featureOverview) {
+        h += '<div class="report-summary">' + esc(r.summaryShort) + '</div>';
+      }
+      return h;
+    }
+
+    function uint8ArrayToBase64(bytes) {
+      var chunks = [];
+      var chunkSize = 8192;
+      for (var i = 0; i < bytes.length; i += chunkSize) {
+        var slice = bytes.subarray(i, Math.min(i + chunkSize, bytes.length));
+        chunks.push(String.fromCharCode.apply(null, slice));
+      }
+      return btoa(chunks.join(''));
+    }
+
+    var UX_AUDIT_PROMPT = 'You are acting as a cross-functional senior team reviewing a digital product screen or flow. You hold four perspectives: UX/UI Designer, UX Researcher, Product Manager, Engineer. Apply Nielsen\'s 10 heuristics.\n\nGOAL: Deep UX audit: research industry patterns, Cognitive Walkthrough step-by-step, Multi-Role Analysis, Nielsen checklist, Usability Hypotheses with ICE (Impact, Confidence, Ease), accessibility.\n\nTASKS: 1) RBU — JTBD, Universal Job Map. 2) External research (3-5 patterns). 3) Cognitive Walkthrough: each step Clear/Friction/Drop-off. 4) Multi-Role: Designer, Researcher, PM, Engineer — each finding references specific element. 5) Nielsen: all 10 heuristics, score 0-2 each. 6) Copy/microcopy. 7) Hypotheses + ICE prioritization.\n\nOUTPUT: Russian only. Valid JSON only, no markdown.\n\nSchema: {"summaryShort":"","score":0-100,"cognitiveWalkthrough":[{"screen":"short screen id (2-4 words)","step","userQuestion","clarity":"Clear|Friction|Drop-off risk","note"}],"multiRoleFindings":[{"role":"Designer|Researcher|PM|Engineer","screen","element","finding","suggestion"}],"nielsenAudit":[{"heuristic","screen":"short screen id","score":0-2,"element","note"}],"usabilityHypotheses":[{"screen":"short screen id","hypothesis","impact":1-5,"confidence":1-5,"ease":1-5,"iceScore","affectedMetric"}],"quickWins":[],"inclusivityTips":[]}\n\nRULES: SCREEN: Every finding MUST have a "screen" field (2-4 words, e.g. "Главная страница", "Оформление заказа"). For quickWins and inclusivityTips: start each string with "Экран: [название]. " so screen is first. cognitiveWalkthrough one per step; multiRoleFindings min 2 per role; nielsenAudit all 10; usabilityHypotheses 3-6 by iceScore; quickWins 3-5; inclusivityTips 2-4. Reference SPECIFIC elements.\n\nTONE: Principal designer. Direct, no softening. State problems as facts. Lead with finding.';
+
+    function buildPromptForDesign(featureName, designJson, goal, metrics) {
+      var feature = featureName || 'не указано';
+      var scenario = goal || 'не указано';
+      var businessGoals = goal ? goal : 'не указано';
+      var successMetrics = metrics || 'не указано';
+      var userPains = 'не указано';
+      var jsonBlock = (typeof designJson === 'string') ? designJson : (designJson ? JSON.stringify(designJson) : '{}');
+      return UX_AUDIT_PROMPT + '\n\n---\n\nINPUT DATA:\n\nFeature: ' + feature + '\nScenario: ' + scenario + '\nBusiness goals: ' + businessGoals + '\nSuccess metrics: ' + successMetrics + '\nUser pains: ' + userPains + '\n\nDESIGN_JSON:\n\n' + jsonBlock;
+    }
+
+    /* --- AI API calls (text only: DESIGN_JSON, no image) --- */
+    function callGeminiWithModel(modelIndex, prompt) {
+      if (modelIndex >= GEMINI_MODELS.length) {
+        return Promise.reject(new Error('Все модели Gemini недоступны. Попробуйте через 1-2 минуты.'));
+      }
+      setLoaderStep(2);
+      statusEl.textContent = 'Анализируем сценарий… (10–30 сек)';
+      var model = GEMINI_MODELS[modelIndex];
+      var url = TEAM_PROXY_URL.replace(/\/+$/, '') + '/v1/generate';
+
+      return fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: model,
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { temperature: 0.4, maxOutputTokens: 16384 }
+        })
+      }).then(function(resp) {
+        if (!resp.ok) {
+          return resp.text().then(function(t) {
+            if (resp.status === 503 || resp.status === 429) {
+              statusEl.textContent = model + ' занята, пробую следующую...';
+              return callGeminiWithModel(modelIndex + 1, prompt);
+            }
+            throw new Error('Gemini ' + resp.status + ': ' + t);
+          });
+        }
+        return resp.json();
+      }).then(function(data) {
+        if (!data || !data.candidates) {
+          return callGeminiWithModel(modelIndex + 1, prompt);
+        }
+        var text = data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text;
+        if (!text) throw new Error('Пустой ответ от Gemini: ' + JSON.stringify(data).substring(0, 500));
+        return cleanAndParseJSON(text);
+      });
+    }
+
+    function callGemini(apiKey, designJson, featureName, goal, metrics) {
+      var prompt = buildPromptForDesign(featureName, designJson, goal, metrics);
+      return callGeminiWithModel(0, prompt);
+    }
+
+    function callPerplexity(apiKey, designJson, featureName, goal, metrics) {
+      var prompt = buildPromptForDesign(featureName, designJson, goal, metrics);
+      setLoaderStep(2);
+      statusEl.textContent = 'Анализируем сценарий… (10–30 сек)';
+      return fetch(PPLX_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
+        body: JSON.stringify({
+          model: 'sonar',
+          messages: [{ role: 'user', content: prompt }],
+          temperature: 0.4, max_tokens: 4096
+        })
+      }).then(function(resp) {
+        if (!resp.ok) return resp.text().then(function(t) { throw new Error('Perplexity ' + resp.status + ': ' + t); });
+        return resp.json();
+      }).then(function(data) {
+        var text = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+        if (!text) throw new Error('Пустой ответ от Perplexity: ' + JSON.stringify(data).substring(0, 500));
+        return cleanAndParseJSON(text);
+      });
+    }
+
+    function normalizeDesignReport(r) {
+      if (!r) return r;
+      if (r.flowOverview != null && r.featureOverview == null) {
+        r.featureOverview = r.flowOverview;
+      }
+      if (r.flowStructure != null && r.flowEvaluation == null) {
+        r.flowEvaluation = r.flowStructure;
+      }
+      if (r.topFixes != null && Array.isArray(r.topFixes)) {
+        r.quickWins = r.topFixes;
+      }
+      if (r.accessibilitySection != null && (!r.inclusivity || r.inclusivity.length === 0)) {
+        r.inclusivity = [r.accessibilitySection];
+      }
+      return r;
+    }
+
+    function setButtonsEnabled(enabled) {
+      var btns = [btnFormatFile, btnCheckUx, btnCheckDs];
+      for (var i = 0; i < btns.length; i++) {
+        if (btns[i]) btns[i].disabled = !enabled;
+      }
+    }
+
+    function formatFileAction() {
+      setButtonsEnabled(false);
+      statusEl.textContent = 'Загрузка компонентов из Tools…';
+      reportEl.innerHTML = '';
+      var url = FIGMA_PROXY_URL.replace(/\/+$/, '') + '/metadata-components';
+      fetch(url).then(function(r) { return r.json(); }).then(function(data) {
+        parent.postMessage({ pluginMessage: { type: 'format-file', payload: data } }, '*');
+      }).catch(function(err) {
+        statusEl.innerHTML = '<span class="status-error">Ошибка загрузки: ' + esc(err.message) + '</span>';
+        setButtonsEnabled(true);
+        parent.postMessage({ pluginMessage: { type: 'format-file', payload: { fallback: true, error: err.message, componentKeys: [] } } }, '*');
+      });
+    }
+
+    function stubAction(btnId, type, label) {
+      var btn = document.getElementById(btnId);
+      if (!btn) return;
+      btn.onclick = function() {
+        statusEl.textContent = 'Скоро…';
+        reportEl.innerHTML = '';
+        parent.postMessage({ pluginMessage: { type: type } }, '*');
+      };
+    }
+
+    if (btnFormatFile) btnFormatFile.onclick = formatFileAction;
+
+    function putReportOnCanvas() {
+      if (!lastUxReport) return;
+      parent.postMessage({ pluginMessage: { type: 'put-report-on-canvas', payload: { report: lastUxReport, featureName: lastFeatureName } } }, '*');
+    }
+    if (btnPutOnCanvas) btnPutOnCanvas.onclick = putReportOnCanvas;
+
+    function checkUxAction() {
+      setButtonsEnabled(false);
+      statusEl.textContent = 'Собираю структуру флоу…';
+      reportEl.innerHTML = '';
+      if (reportActionsEl) reportActionsEl.style.display = 'none';
+      showLoader(['Сборка DESIGN_JSON', 'Отправка в Gemini', 'Анализ']);
+      setLoaderStep(0);
+      parent.postMessage({ pluginMessage: { type: 'check-ux' } }, '*');
+    }
+    if (btnCheckUx) btnCheckUx.onclick = checkUxAction;
+    stubAction('btn-check-ds', 'check-design-system', 'Проверить дизайн-систему');
+
+    if (closeBtn) {
+      closeBtn.onclick = function() {
+        parent.postMessage({ pluginMessage: { type: 'close' } }, '*');
+      };
+    }
+
+    /* --- Messages from code.ts --- */
+    window.onmessage = function(event) {
+      var msg = event.data && event.data.pluginMessage;
+      if (!msg) return;
+
+      if (msg.type === 'ds-tokens') {
+        applyDSTokens(msg.tokens);
+        return;
+      }
+
+      if (msg.type === 'design-json-ready') {
+        var p = msg.payload || {};
+        setLoaderStep(1);
+        statusEl.textContent = 'Отправка в Gemini…';
+        var prompt = buildPromptForDesign(p.featureName, p.designJson, p.scenarioGoal, p.keyMetrics);
+        callGeminiWithModel(0, prompt).then(function(r) {
+          setLoaderStep(2);
+          hideLoader();
+          lastUxReport = r;
+          lastFeatureName = p.featureName || null;
+          reportEl.innerHTML = formatReport(r);
+          if (reportActionsEl) reportActionsEl.style.display = 'block';
+          statusEl.textContent = 'UX-аудит завершён';
+          setButtonsEnabled(true);
+        }).catch(function(err) {
+          hideLoader();
+          showError(err.message || String(err));
+          setButtonsEnabled(true);
+        });
+        return;
+      }
+
+      if (msg.type === 'error') {
+        hideLoader();
+        showError(msg.message);
+        setButtonsEnabled(true);
+      }
+
+      if (msg.type === 'stub-done') {
+        statusEl.textContent = msg.message || 'Скоро';
+        setButtonsEnabled(true);
+      }
+      if (msg.type === 'add-metadata-fallback') {
+        var hint = msg.reason === 'library'
+          ? 'Подключите библиотеку Tools к файлу (Resources → Libraries) и опубликуйте её.'
+          : 'Proxy не вернул компоненты. Проверьте FIGMA_ACCESS_TOKEN на сервере.';
+        reportEl.innerHTML = '<p class="status-error">' + hint + '</p>';
+      }
+    };
+
+    function formatLocalDsReport(report) {
+      if (!report) return '';
+      var h = '<div class="report-section-title">Design System Check</div>';
+      h += '<div class="report-summary">' + esc(report.summary) + '</div>';
+      if (report.issues && report.issues.length > 0) {
+        h += '<div class="report-section-title">Нарушения</div>';
+        for (var i = 0; i < report.issues.length; i++) {
+          var issue = report.issues[i];
+          h += '<div class="problem-card">';
+          h += '<div class="title">' + esc(issue.type) + ': ' + esc(issue.nodeName) + '</div>';
+          h += '<div class="meta">' + esc(issue.description) + '</div>';
+          h += '<div class="action">→ ' + esc(issue.recommendation) + '</div>';
+          h += '</div>';
+        }
+      }
+      return h;
+    }
+
+    statusEl.textContent = 'Выберите действие.';
+  </script>
+</body>
+</html>

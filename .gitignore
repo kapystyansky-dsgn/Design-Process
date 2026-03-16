@@ -1,0 +1,15 @@
+# Node
+*.log
+*.log.*
+node_modules/
+
+out/
+dist/
+code.js
+
+# Артефакты
+*.zip
+
+# Секреты (не коммитить)
+proxy/.env
+.env
