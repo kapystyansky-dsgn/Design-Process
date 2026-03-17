@@ -1,4 +1,5 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 const express = require('express');
 const cors = require('cors');
@@ -7,7 +8,7 @@ const rateLimit = require('express-rate-limit');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || '';
+const GEMINI_API_KEY = (process.env.GEMINI_API_KEY || '').trim();
 const FIGMA_ACCESS_TOKEN = process.env.FIGMA_ACCESS_TOKEN || '';
 const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta/models/';
 const FIGMA_API = 'https://api.figma.com/v1';
@@ -50,6 +51,48 @@ app.get('/health', (_req, res) => {
   });
 });
 
+// Тест ключа — реальный запрос к Gemini (минимальный)
+app.get('/test-gemini', async (_req, res) => {
+  if (!GEMINI_API_KEY) {
+    return res.status(500).json({ ok: false, error: 'Ключ не загружен' });
+  }
+  try {
+    const url = GEMINI_BASE + 'gemini-2.5-flash:generateContent?key=' + encodeURIComponent(GEMINI_API_KEY);
+    const resp = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: 'Say OK' }] }],
+        generationConfig: { maxOutputTokens: 10 },
+      }),
+    });
+    const data = await resp.json();
+    if (resp.ok && data.candidates) {
+      return res.json({ ok: true, message: 'Ключ работает' });
+    }
+    return res.status(400).json({ ok: false, geminiError: data.error || data });
+  } catch (err) {
+    return res.status(502).json({ ok: false, error: err.message });
+  }
+});
+
+// Диагностика ключа (без раскрытия самого ключа)
+app.get('/debug-key', (_req, res) => {
+  const loaded = !!GEMINI_API_KEY;
+  res.json({
+    keyLoaded: loaded,
+    keyLength: GEMINI_API_KEY.length,
+    keyPrefix: loaded ? GEMINI_API_KEY.substring(0, 6) + '...' : null,
+    hint: !loaded
+      ? 'Ключ не загружен. Проверьте /opt/gemini-proxy/.env и pm2 restart --update-env'
+      : GEMINI_API_KEY.length < 30
+        ? 'Ключ слишком короткий — проверьте формат'
+        : !GEMINI_API_KEY.startsWith('AIza')
+          ? 'Ключ должен начинаться с AIza — проверьте на aistudio.google.com/apikey'
+          : 'Формат ок. Если ошибка 400 — ключ недействителен или истёк. Создайте новый на aistudio.google.com/apikey',
+  });
+});
+
 app.post('/v1/generate', async (req, res) => {
   try {
     const { contents, generationConfig, model } = req.body;
@@ -64,7 +107,7 @@ app.post('/v1/generate', async (req, res) => {
     }
 
     const modelName = (model && ALLOWED_MODELS.includes(model)) ? model : ALLOWED_MODELS[0];
-    const url = GEMINI_BASE + modelName + ':generateContent?key=' + key;
+    const url = GEMINI_BASE + modelName + ':generateContent?key=' + encodeURIComponent(key);
 
     const response = await fetch(url, {
       method: 'POST',

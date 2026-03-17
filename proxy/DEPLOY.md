@@ -38,7 +38,7 @@ nano .env
 
 В .env должно быть:
 ```
-GEMINI_API_KEY=AIzaSyDEmqOkW1bOyVOTZ0gai4lgdWN1BFIQpuM
+GEMINI_API_KEY=AIzaSy...ваш_ключ_из_aistudio_google_com_apikey
 FIGMA_ACCESS_TOKEN=ваш_токен_если_есть
 PORT=3000
 ```
@@ -87,7 +87,7 @@ GEMINI_API_KEY="..." pm2 start server.js --name gemini-proxy
 
 **B) Использовать .env** — создайте `/opt/gemini-proxy/.env`:
 ```
-GEMINI_API_KEY=AIzaSy...
+GEMINI_API_KEY=AIzaSy...ваш_ключ
 FIGMA_ACCESS_TOKEN=figd_...
 PORT=3000
 ```
